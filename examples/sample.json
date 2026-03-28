@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What is the capital of France?",
+    "context": "France's capital city is Paris.",
+    "answer": "Paris is the capital of France."
+  },
+  {
+    "question": "Who created Python?",
+    "context": "Python was created by Guido van Rossum in the late 1980s and first released in 1991.",
+    "answer": "Python was created by Guido van Rossum."
+  },
+  {
+    "question": "What is the tallest mountain in the world?",
+    "context": "Mount Everest is Earth's highest mountain above sea level.",
+    "answer": "K2 is the tallest mountain in the world."
+  }
+]

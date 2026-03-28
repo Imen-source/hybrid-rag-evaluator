@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "flow_name": "RAGEvaluationFlowLocal",
+    "run_id": "local-20260328183831",
+    "dataset_path": "examples/sample.json",
+    "dataset_hash": "ffa0b1ad74a12f3576562090ee2c8e13caa1e5ab5b67b02ba2141f4144d0d1e3",
+    "run_started_at": "2026-03-28T18:38:31.898956+00:00",
+    "run_completed_at": "2026-03-28T18:41:15.098040+00:00",
+    "results_path": "results.json",
+    "orchestrator": "local-fallback"
+  },
+  "config": {
+    "dataset_path": "examples/sample.json",
+    "results_path": "results.json",
+    "cache_dir": "eval_cache",
+    "llm_provider": "ollama",
+    "model": "phi",
+    "api_base": null,
+    "api_key_env": "OPENAI_API_KEY",
+    "temperature": 0.0,
+    "use_hybrid": true,
+    "num_runs": 2,
+    "verbose": false,
+    "orchestrator": "local-fallback"
+  },
+  "metrics": {
+    "avg_correctness": 0.7876935310099203,
+    "avg_relevance": 0.8551762091069871,
+    "avg_groundedness": 0.8368775195795203,
+    "avg_semantic_similarity": 0.8002482779695758,
+    "avg_keyword_overlap": 0.6547619047619048,
+    "avg_confidence": 0.9200993111878303,
+    "hallucination_rate": 0.0,
+    "sample_count": 3
+  },
+  "samples": [
+    {
+      "question": "What is the capital of France?",
+      "context": "France's capital city is Paris.",
+      "answer": "Paris is the capital of France.",
+      "evaluation": {
+        "correctness": 0.9234265610321112,
+        "relevance": 0.923487591576774,
+        "groundedness": 0.9233655304874485,
+        "hallucination": false,
+        "explanation": "Paris is the capital city of France. | Paris is the capital city of France.",
+        "semantic_similarity": 0.9114218701070375,
+        "keyword_overlap": 0.75,
+        "confidence": 0.964568748042815
+      }
+    },
+    {
+      "question": "Who created Python?",
+      "context": "Python was created by Guido van Rossum in the late 1980s and first released in 1991.",
+      "answer": "Python was created by Guido van Rossum.",
+      "evaluation": {
+        "correctness": 0.8897357911956224,
+        "relevance": 0.7657727854087535,
+        "groundedness": 0.9636987969824915,
+        "hallucination": false,
+        "explanation": "Python was created by Guido van Rossum in the late 1990s and first released in 1991. | Python was created by Guido van Rossum in the late 1990s and first released in 1991.",
+        "semantic_similarity": 0.8705478754139795,
+        "keyword_overlap": 0.6428571428571428,
+        "confidence": 0.9482191501655918
+      }
+    },
+    {
+      "question": "What is the tallest mountain in the world?",
+      "context": "Mount Everest is Earth's highest mountain above sea level.",
+      "answer": "K2 is the tallest mountain in the world.",
+      "evaluation": {
+        "correctness": 0.5499182408020273,
+        "relevance": 0.876268250335434,
+        "groundedness": 0.6235682312686208,
+        "hallucination": false,
+        "explanation": "K2 is the second-tallest mountain in the world and is located in the Karakoram range of the Himalayas. | K2 is the second-tallest mountain in the world and is located in the Karakoram range of the Himalayas.",
+        "semantic_similarity": 0.6187750883877102,
+        "keyword_overlap": 0.5714285714285714,
+        "confidence": 0.8475100353550841
+      }
+    }
+  ]
+}
