@@ -1,0 +1,112 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-traces}
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-traces}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mlflow:
+    build:
+      context: ..
+      dockerfile: infra/mlflow.Dockerfile
+    ports:
+      - "${MLFLOW_PORT:-5001}:5000"
+    volumes:
+      - mlflow_data:/mlflow/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000')\""]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-traces}
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/worker.Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-traces}
+      REDIS_URL: redis://redis:6379/0
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_EXPERIMENT: ${MLFLOW_EXPERIMENT:-trace-eval-runs}
+      JUDGE_PROVIDER: ${JUDGE_PROVIDER:-openai}
+      JUDGE_MODEL: ${JUDGE_MODEL:-}
+      JUDGE_NUM_RUNS: ${JUDGE_NUM_RUNS:-1}
+      JUDGE_USE_HYBRID: ${JUDGE_USE_HYBRID:-true}
+      JUDGE_TEMPERATURE: ${JUDGE_TEMPERATURE:-0.0}
+      EVAL_WORKER_COUNT: ${EVAL_WORKER_COUNT:-1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+      WORKER_METRICS_PORT: ${WORKER_METRICS_PORT:-9100}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    depends_on:
+      - api
+      - worker
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  mlflow_data:
+  prometheus_data:
+  grafana_data:

@@ -1,0 +1,15 @@
+-r requirements-mlflow.txt
+diskcache>=5.6.3
+pydantic>=2.7.0
+ollama>=0.4.4
+openai>=1.40.0
+# torch itself is installed separately (see infra/worker.Dockerfile) from
+# the PyTorch CPU-only index, before this file, to avoid pulling several GB
+# of CUDA/nvidia-* packages into a container that never touches a GPU.
+sentence-transformers>=3.0.1
+scikit-learn>=1.5.1
+sqlalchemy>=2.0.30
+psycopg2-binary>=2.9.9
+rq>=1.16.0
+redis>=5.0.0
+prometheus-client>=0.20.0
