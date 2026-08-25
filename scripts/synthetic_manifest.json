@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T10:38:56.920175+00:00",
+  "generated_at": "2026-08-25T15:34:32.503176+00:00",
   "api_url": "http://localhost:8000",
   "seed": 42,
   "total": 70,
@@ -11,7 +11,7 @@
   ],
   "traces": [
     {
-      "trace_id": "ab8a3461-2545-4191-8bcc-c15518bd9468",
+      "trace_id": "ebb25052-a067-4840-9a95-07a6b89fc870",
       "label": "good",
       "failure_mode": null,
       "domain": "geography",
@@ -21,7 +21,7 @@
       "retrieved_context": "France's capital city is Paris, located on the Seine river in the north of the country."
     },
     {
-      "trace_id": "08f4c4be-abc9-4b9d-93b9-07bc0a4546f0",
+      "trace_id": "186f7e6c-e89f-40f1-a523-8845fb6ef394",
       "label": "good",
       "failure_mode": null,
       "domain": "geography",
@@ -31,7 +31,7 @@
       "retrieved_context": "The Nile River, flowing through northeastern Africa, is generally considered the longest river in the world at approximately 6,650 kilometers."
     },
     {
-      "trace_id": "28b98c28-c6f4-4019-8474-083db0a1991f",
+      "trace_id": "3582085e-43e5-4b5c-9051-796128007c53",
       "label": "good",
       "failure_mode": null,
       "domain": "geography",
@@ -41,7 +41,7 @@
       "retrieved_context": "The Sahara Desert in North Africa is the largest hot desert on Earth, covering roughly 9.2 million square kilometers."
     },
     {
-      "trace_id": "a630025b-6a24-4d4e-8812-2840bf979a8e",
+      "trace_id": "38c5f10d-72da-4991-b22d-76589367f74f",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "geography",
@@ -51,7 +51,7 @@
       "retrieved_context": "Android is a mobile operating system that was primarily developed by Google, with the first commercial version released in 2008."
     },
     {
-      "trace_id": "effa9e05-3edc-4d93-967d-b08be62a987e",
+      "trace_id": "10f2483c-6058-40cf-9d89-1789046b55fe",
       "label": "good",
       "failure_mode": null,
       "domain": "geography",
@@ -61,7 +61,7 @@
       "retrieved_context": "Mount Everest, located in the Himalayas on the border of Nepal and China, stands at 8,849 meters above sea level, making it the tallest mountain above sea level."
     },
     {
-      "trace_id": "b3528e19-6343-4038-a5ac-30a9d605c737",
+      "trace_id": "6c664653-12fc-416b-a761-97d957d869c0",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "physics",
@@ -71,7 +71,7 @@
       "retrieved_context": "Pi, the ratio of a circle's circumference to its diameter, is approximately 3.14159, or 3.14 when rounded to two decimal places."
     },
     {
-      "trace_id": "f268dafb-86af-4c08-8639-df13bde4caba",
+      "trace_id": "3484c1f9-e7e6-4b06-ab9f-5213edbf248b",
       "label": "good",
       "failure_mode": null,
       "domain": "physics",
@@ -81,7 +81,7 @@
       "retrieved_context": "Albert Einstein published his theory of general relativity in 1915, describing gravity as the curvature of spacetime."
     },
     {
-      "trace_id": "91adba05-b422-42f7-ac50-a72c4e2901d7",
+      "trace_id": "6bdd3c6f-231f-4d1d-82cd-5d96d660329d",
       "label": "good",
       "failure_mode": null,
       "domain": "physics",
@@ -91,7 +91,7 @@
       "retrieved_context": "Newton's second law states that the force acting on an object equals its mass multiplied by its acceleration, expressed as F = ma."
     },
     {
-      "trace_id": "010730fa-a046-4930-969d-d27a7dfb8c34",
+      "trace_id": "0465fcda-9c49-40fa-9828-526c7a859eff",
       "label": "good",
       "failure_mode": null,
       "domain": "physics",
@@ -101,7 +101,7 @@
       "retrieved_context": "The photon is the elementary particle that carries the electromagnetic force and has no mass."
     },
     {
-      "trace_id": "c6e7669d-fd0d-4e19-a3b5-e3bfc13fbdc8",
+      "trace_id": "bb35a2c7-3498-426c-98c9-3c88c045d86b",
       "label": "good",
       "failure_mode": null,
       "domain": "physics",
@@ -111,7 +111,7 @@
       "retrieved_context": "At standard atmospheric pressure, water freezes at 0 degrees Celsius (32 degrees Fahrenheit)."
     },
     {
-      "trace_id": "354be4ec-5b81-48bf-8beb-e28d814c60ff",
+      "trace_id": "e45c2b0d-f735-4b19-8ff5-ee71e074cade",
       "label": "good",
       "failure_mode": null,
       "domain": "chemistry",
@@ -121,7 +121,7 @@
       "retrieved_context": "Gold, a dense yellow metal prized since antiquity, has the chemical symbol Au, derived from the Latin word aurum."
     },
     {
-      "trace_id": "764c6144-0568-42eb-b05b-6133094c016b",
+      "trace_id": "3866dddd-3ed0-4e53-8617-4b677bbe82af",
       "label": "good",
       "failure_mode": null,
       "domain": "chemistry",
@@ -131,7 +131,7 @@
       "retrieved_context": "During photosynthesis, plants absorb carbon dioxide from the atmosphere and use sunlight to convert it into glucose and oxygen."
     },
     {
-      "trace_id": "b4db0c48-f993-48a6-9748-6f354700cc01",
+      "trace_id": "f1ce1834-23bc-460d-8b5b-7eb185033924",
       "label": "good",
       "failure_mode": null,
       "domain": "chemistry",
@@ -141,7 +141,7 @@
       "retrieved_context": "Nitrogen makes up about 78 percent of Earth's atmosphere by volume, making it the most abundant gas present."
     },
     {
-      "trace_id": "fe3b73ab-f9eb-4da7-94f5-1184870eaf1e",
+      "trace_id": "206d44e3-fe96-4edb-97a5-2c569fbe132d",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "chemistry",
@@ -151,7 +151,7 @@
       "retrieved_context": "Type O negative blood is considered the universal donor type because it lacks A, B, and Rh antigens, making it compatible with most recipients."
     },
     {
-      "trace_id": "db8a9d42-e05c-495c-ae54-50cfc400007f",
+      "trace_id": "97243e42-3e17-4e1b-a5e3-163790ea5e2a",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "chemistry",
@@ -161,7 +161,7 @@
       "retrieved_context": "Diabetes mellitus is a chronic condition caused by insufficient insulin production or the body's resistance to insulin, leading to high blood sugar levels."
     },
     {
-      "trace_id": "d2273e21-d0e7-46ec-b64b-cccd1497d1f1",
+      "trace_id": "3129c011-bb35-4a95-9ad1-035de6a4e16e",
       "label": "good",
       "failure_mode": null,
       "domain": "biology",
@@ -171,7 +171,7 @@
       "retrieved_context": "Mitochondria generate most of a cell's supply of ATP, the energy currency of the cell, earning them the nickname 'powerhouse of the cell.'"
     },
     {
-      "trace_id": "eb4c3115-4b4f-4cb7-b0bd-4b2915277411",
+      "trace_id": "c81551d5-fe3a-40dd-ab45-d697c7e8d5a6",
       "label": "good",
       "failure_mode": null,
       "domain": "biology",
@@ -181,7 +181,7 @@
       "retrieved_context": "The human heart has four chambers: two atria and two ventricles, which work together to pump blood through the body."
     },
     {
-      "trace_id": "891ac759-a9b1-4bf8-a198-ae988fb38c9b",
+      "trace_id": "9689ce90-4380-4eb5-afef-d91d349ce364",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "biology",
@@ -191,7 +191,7 @@
       "retrieved_context": "Gross Domestic Product, or GDP, measures the total monetary value of all goods and services produced within a country's borders in a given year."
     },
     {
-      "trace_id": "2d6a53c6-d504-4e50-a2c6-88d028d80e3f",
+      "trace_id": "80bc5108-0ad4-4ebc-bece-0268edffc62c",
       "label": "good",
       "failure_mode": null,
       "domain": "biology",
@@ -201,7 +201,7 @@
       "retrieved_context": "Deoxyribonucleic acid, or DNA, carries the genetic instructions used in the growth, development, and functioning of most living organisms."
     },
     {
-      "trace_id": "b7cf320a-ed72-485e-a717-7bee6e43e8da",
+      "trace_id": "dfba067d-677d-4d0e-97ea-d822b8606c05",
       "label": "good",
       "failure_mode": null,
       "domain": "biology",
@@ -211,7 +211,7 @@
       "retrieved_context": "The skin is the largest organ of the human body, covering an average surface area of about 1.8 square meters in adults."
     },
     {
-      "trace_id": "0f068dbc-bcb3-4742-b185-7925ee8ef77b",
+      "trace_id": "85cfac87-69ed-478a-92cc-62c2c003227e",
       "label": "good",
       "failure_mode": null,
       "domain": "astronomy",
@@ -221,7 +221,7 @@
       "retrieved_context": "Mars is often called the Red Planet because iron oxide, or rust, on its surface gives it a reddish appearance."
     },
     {
-      "trace_id": "320c562e-4e66-4502-a679-377ebd62c84e",
+      "trace_id": "63f7ba0e-57b4-4a6c-ac5f-ac87966fb70f",
       "label": "good",
       "failure_mode": null,
       "domain": "astronomy",
@@ -231,7 +231,7 @@
       "retrieved_context": "The Sun is the closest star to Earth, located about 150 million kilometers away, and is the center of our solar system."
     },
     {
-      "trace_id": "3f7538c0-9603-4be2-9af9-d4034cb76542",
+      "trace_id": "62b83c2d-1119-4aa7-b4d5-c7a83f0248d1",
       "label": "good",
       "failure_mode": null,
       "domain": "astronomy",
@@ -241,7 +241,7 @@
       "retrieved_context": "Our solar system contains eight recognized planets, ranging from Mercury, closest to the Sun, to Neptune, the farthest."
     },
     {
-      "trace_id": "0c1a54e1-1d6a-48ac-9e81-5639d7c52d74",
+      "trace_id": "73bf2bea-a60d-4822-90ad-fe1923e4c6f2",
       "label": "good",
       "failure_mode": null,
       "domain": "astronomy",
@@ -251,7 +251,7 @@
       "retrieved_context": "Earth is located within the Milky Way galaxy, a barred spiral galaxy containing hundreds of billions of stars."
     },
     {
-      "trace_id": "e65036e3-4fca-4cb8-b131-3a0cd459dbce",
+      "trace_id": "7cf22f09-14b6-4780-afdf-2c174ab3481b",
       "label": "good",
       "failure_mode": null,
       "domain": "astronomy",
@@ -261,7 +261,7 @@
       "retrieved_context": "Sputnik 1, launched by the Soviet Union in 1957, was the first artificial satellite to orbit Earth."
     },
     {
-      "trace_id": "3aa8082f-e5fd-44d2-abbb-a251e19f548c",
+      "trace_id": "0a0b5175-0322-471d-823d-34de38db81c3",
       "label": "good",
       "failure_mode": null,
       "domain": "history",
@@ -271,7 +271,7 @@
       "retrieved_context": "World War II ended in 1945 following the surrender of Germany in May and Japan in September of that year."
     },
     {
-      "trace_id": "a6348109-3938-48cb-8368-43e7fb15956f",
+      "trace_id": "c6c46a4d-0c48-4556-816c-4b983fa190c2",
       "label": "good",
       "failure_mode": null,
       "domain": "history",
@@ -281,7 +281,7 @@
       "retrieved_context": "George Washington served as the first President of the United States, taking office in 1789."
     },
     {
-      "trace_id": "b1400cee-0458-4870-b431-03fdc66d8890",
+      "trace_id": "0d529f7e-213e-4a90-8421-b7acf51916f8",
       "label": "good",
       "failure_mode": null,
       "domain": "history",
@@ -291,7 +291,7 @@
       "retrieved_context": "The pyramids of Giza were constructed by the ancient Egyptians as tombs for their pharaohs, primarily during the Fourth Dynasty."
     },
     {
-      "trace_id": "5dec6576-082d-41ab-9792-4912b6c5c99e",
+      "trace_id": "c2c9b43f-ef5e-430f-b3ec-8fee9623d0ee",
       "label": "bad",
       "failure_mode": "context_swap",
       "domain": "history",
@@ -301,7 +301,7 @@
       "retrieved_context": "Association football, commonly known as soccer, is often referred to as 'the beautiful game' due to its global popularity and fluid style of play."
     },
     {
-      "trace_id": "411e7082-cb0a-4f1d-a4c6-39b0ef7b1e99",
+      "trace_id": "549b6165-b25f-487a-ae2c-8b4183856637",
       "label": "good",
       "failure_mode": null,
       "domain": "history",
@@ -311,7 +311,7 @@
       "retrieved_context": "Thomas Jefferson was the principal author of the United States Declaration of Independence, adopted in 1776."
     },
     {
-      "trace_id": "f57e782b-2ddd-4813-bcc0-e37bb182d602",
+      "trace_id": "a8e48378-7d7f-4589-8f86-3bc26e989720",
       "label": "good",
       "failure_mode": null,
       "domain": "literature",
@@ -321,7 +321,7 @@
       "retrieved_context": "Pride and Prejudice is a novel written by Jane Austen, first published in 1813."
     },
     {
-      "trace_id": "bc7a09e1-5a62-41b5-b6d8-20ea61778323",
+      "trace_id": "e9de3ec2-83ab-49db-b45d-4bc62e7f6484",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "literature",
@@ -331,7 +331,7 @@
       "retrieved_context": "The Harry Potter series was written by British author J.K. Rowling, with the first book published in 1997."
     },
     {
-      "trace_id": "0e6a2ce8-3fe6-42e8-a476-4fb31df6a3b7",
+      "trace_id": "180f4720-67ef-452f-befa-6bca2b832554",
       "label": "good",
       "failure_mode": null,
       "domain": "literature",
@@ -341,7 +341,7 @@
       "retrieved_context": "Arthur Conan Doyle created the detective character Sherlock Holmes, who first appeared in print in 1887."
     },
     {
-      "trace_id": "edefb68f-da72-482d-af30-c5473ecbf43e",
+      "trace_id": "006f9d2c-1d9e-4d37-9084-80fa9082adef",
       "label": "good",
       "failure_mode": null,
       "domain": "literature",
@@ -351,7 +351,7 @@
       "retrieved_context": "Romeo and Juliet is a tragedy written by William Shakespeare early in his career, believed to have been written around 1594-1596."
     },
     {
-      "trace_id": "4e1a3b05-0f5c-4d0b-826d-605e7c6bf89a",
+      "trace_id": "26ea8315-46d3-4c45-a706-fae90a3492d7",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "literature",
@@ -361,7 +361,7 @@
       "retrieved_context": "George Orwell's novel Nineteen Eighty-Four, published in 1949, introduced the concept of Big Brother as a symbol of totalitarian surveillance."
     },
     {
-      "trace_id": "d1347723-89a2-438d-9f90-69687cec7391",
+      "trace_id": "8a23bfb3-9ef7-44be-910c-0396a001402c",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "technology",
@@ -371,7 +371,7 @@
       "retrieved_context": "Tim Berners-Lee, a British computer scientist, is credited with inventing the World Wide Web in 1989 while working at CERN."
     },
     {
-      "trace_id": "feb9d74f-082f-4bb9-a495-973b85f32e4e",
+      "trace_id": "8a3f2723-81b5-48da-8a54-93bc149e6baf",
       "label": "good",
       "failure_mode": null,
       "domain": "technology",
@@ -381,7 +381,7 @@
       "retrieved_context": "CPU stands for Central Processing Unit, the primary component of a computer that executes instructions."
     },
     {
-      "trace_id": "696604c5-9e11-4647-a9b2-b1db31e54c2c",
+      "trace_id": "8ecb31b2-5ac1-40d8-9af3-bb70e3c5cccd",
       "label": "good",
       "failure_mode": null,
       "domain": "technology",
@@ -391,7 +391,7 @@
       "retrieved_context": "Python is a high-level programming language created by Guido van Rossum and first released in 1991."
     },
     {
-      "trace_id": "c3ca02df-4c0d-4b5a-a619-878eec2dc635",
+      "trace_id": "e6381bf1-15ad-4c5a-adc9-056b44661623",
       "label": "good",
       "failure_mode": null,
       "domain": "technology",
@@ -401,7 +401,7 @@
       "retrieved_context": "Android is a mobile operating system that was primarily developed by Google, with the first commercial version released in 2008."
     },
     {
-      "trace_id": "b900dcd3-7d42-4422-8f0d-7fe571cfa0b4",
+      "trace_id": "d5bf210e-8012-4a1d-8ec5-b0c76da6dad9",
       "label": "good",
       "failure_mode": null,
       "domain": "technology",
@@ -411,7 +411,7 @@
       "retrieved_context": "HTTP stands for Hypertext Transfer Protocol, the foundational protocol used for transmitting data over the World Wide Web."
     },
     {
-      "trace_id": "4e0b57dc-da0b-474a-81a3-148b662a6d31",
+      "trace_id": "f4f7b2e2-05e3-4fd9-baaf-d0a9de0f11e7",
       "label": "good",
       "failure_mode": null,
       "domain": "mathematics",
@@ -421,7 +421,7 @@
       "retrieved_context": "Pi, the ratio of a circle's circumference to its diameter, is approximately 3.14159, or 3.14 when rounded to two decimal places."
     },
     {
-      "trace_id": "3b1322f6-6bb0-46ce-a72e-388b10edcb37",
+      "trace_id": "eca93ef0-89d1-4853-8c25-b493398cbcd5",
       "label": "good",
       "failure_mode": null,
       "domain": "mathematics",
@@ -431,7 +431,7 @@
       "retrieved_context": "In Euclidean geometry, the interior angles of any triangle always sum to 180 degrees."
     },
     {
-      "trace_id": "bb146559-91b8-41c7-9c06-02577dc95622",
+      "trace_id": "50dfd0d5-c892-491b-9dc0-961b9973b2b5",
       "label": "good",
       "failure_mode": null,
       "domain": "mathematics",
@@ -441,7 +441,7 @@
       "retrieved_context": "144 is a perfect square, and its square root is 12, since 12 multiplied by 12 equals 144."
     },
     {
-      "trace_id": "2519fb14-b615-4e76-a89b-ce73c3d0376d",
+      "trace_id": "d0bf018a-94f3-48b1-b29d-5d2ffce1e5f6",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "mathematics",
@@ -451,7 +451,7 @@
       "retrieved_context": "A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself."
     },
     {
-      "trace_id": "21675dd6-5fd2-4e4b-9334-b93612703a3b",
+      "trace_id": "c2257b81-41c2-4dd9-ae8d-e1391da13d43",
       "label": "good",
       "failure_mode": null,
       "domain": "mathematics",
@@ -461,7 +461,7 @@
       "retrieved_context": "Euler's number, denoted e, is a mathematical constant approximately equal to 2.71828, widely used in calculus."
     },
     {
-      "trace_id": "c4e6770f-4e57-4de0-b8be-f2656ca4b34a",
+      "trace_id": "05c8e8d3-6b3f-4f0f-a180-60bda08dd13b",
       "label": "good",
       "failure_mode": null,
       "domain": "medicine",
@@ -471,7 +471,7 @@
       "retrieved_context": "The kidneys filter waste products and excess fluid from the blood, producing urine as a byproduct."
     },
     {
-      "trace_id": "48e87aa3-5688-47ea-8feb-9bd8388abdc1",
+      "trace_id": "b57b035e-a767-4296-83fd-b5de42cc42b0",
       "label": "good",
       "failure_mode": null,
       "domain": "medicine",
@@ -481,7 +481,7 @@
       "retrieved_context": "When skin is exposed to ultraviolet sunlight, the body synthesizes vitamin D, which supports bone health."
     },
     {
-      "trace_id": "553893fb-34de-4c1c-b20c-48bb0546741f",
+      "trace_id": "3e20702d-88b9-4d5e-8ff2-530564c8eb3c",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "medicine",
@@ -491,7 +491,7 @@
       "retrieved_context": "A healthy adult's resting heart rate typically ranges between 60 and 100 beats per minute."
     },
     {
-      "trace_id": "a6ac371d-40f7-4013-8d1d-08458421fdee",
+      "trace_id": "fa6cf72e-99ee-429c-9991-23184cc08712",
       "label": "good",
       "failure_mode": null,
       "domain": "medicine",
@@ -501,7 +501,7 @@
       "retrieved_context": "Type O negative blood is considered the universal donor type because it lacks A, B, and Rh antigens, making it compatible with most recipients."
     },
     {
-      "trace_id": "31da2b75-1fce-4c8b-8cf4-0ea68384f9a8",
+      "trace_id": "d0e981db-d81b-48c4-ac02-10832c7bc1df",
       "label": "good",
       "failure_mode": null,
       "domain": "medicine",
@@ -511,7 +511,7 @@
       "retrieved_context": "Diabetes mellitus is a chronic condition caused by insufficient insulin production or the body's resistance to insulin, leading to high blood sugar levels."
     },
     {
-      "trace_id": "b1de21ff-d32d-4fcb-b032-fbf0ea171d52",
+      "trace_id": "8770bfe9-f6fa-4288-a8b8-bd2718dc6ef5",
       "label": "good",
       "failure_mode": null,
       "domain": "economics",
@@ -521,7 +521,7 @@
       "retrieved_context": "Inflation refers to a sustained increase in the general price level of goods and services in an economy over time."
     },
     {
-      "trace_id": "4732cc2a-31e4-4633-8f9a-3732ab2740f1",
+      "trace_id": "46ecd137-852d-4127-bf1d-fad01849df29",
       "label": "good",
       "failure_mode": null,
       "domain": "economics",
@@ -531,7 +531,7 @@
       "retrieved_context": "The Wealth of Nations, published in 1776, was written by Scottish economist Adam Smith and is considered a foundational text of classical economics."
     },
     {
-      "trace_id": "9f184bba-d05c-4038-8895-d98c32d5530b",
+      "trace_id": "95fd0416-1b54-4cd1-9dc8-b396e0112e25",
       "label": "good",
       "failure_mode": null,
       "domain": "economics",
@@ -541,7 +541,7 @@
       "retrieved_context": "Gross Domestic Product, or GDP, measures the total monetary value of all goods and services produced within a country's borders in a given year."
     },
     {
-      "trace_id": "aed26a02-82fc-49ab-b012-263e629ac3d6",
+      "trace_id": "2a23a4d1-efcd-4683-ad78-c79ea623b4d4",
       "label": "good",
       "failure_mode": null,
       "domain": "economics",
@@ -551,7 +551,7 @@
       "retrieved_context": "The law of supply and demand describes how the price of a good is determined by the balance between how much of it is available and how much people want it."
     },
     {
-      "trace_id": "5ee6a59e-edb5-4a4a-8dc7-40e71e590611",
+      "trace_id": "d90da202-40e2-498a-9db8-5f950267c53c",
       "label": "good",
       "failure_mode": null,
       "domain": "economics",
@@ -561,7 +561,7 @@
       "retrieved_context": "The Federal Reserve is the central banking system of the United States and is responsible for setting the country's monetary policy."
     },
     {
-      "trace_id": "6c08feb5-b356-4b78-90eb-9bdfebaced80",
+      "trace_id": "5c2e3c51-4989-4b8e-b7dc-abdf49ec7d3b",
       "label": "good",
       "failure_mode": null,
       "domain": "law",
@@ -571,7 +571,7 @@
       "retrieved_context": "The United States Constitution, ratified in 1788, is considered the supreme law of the land in the United States."
     },
     {
-      "trace_id": "7845a6d6-76b5-4ace-80b2-64fb68d0f5b8",
+      "trace_id": "57b616ae-99bf-466d-b027-f9bcf47b5b46",
       "label": "good",
       "failure_mode": null,
       "domain": "law",
@@ -581,7 +581,7 @@
       "retrieved_context": "A will is a legal document that specifies how a person's property and assets should be distributed after their death."
     },
     {
-      "trace_id": "dda39fc6-5ec3-4b8e-beab-8915e13c3523",
+      "trace_id": "32b955bf-3365-407a-ac0d-c8c6a2990c1f",
       "label": "bad",
       "failure_mode": "hallucinated_answer",
       "domain": "law",
@@ -591,7 +591,7 @@
       "retrieved_context": "The Thirteenth Amendment to the United States Constitution, ratified in 1865, abolished slavery and involuntary servitude."
     },
     {
-      "trace_id": "312ad300-d20a-492c-9a46-17a887144532",
+      "trace_id": "dd4ad1e1-d520-4da5-ad80-1bed81d48383",
       "label": "good",
       "failure_mode": null,
       "domain": "law",
@@ -601,7 +601,7 @@
       "retrieved_context": "In most legal systems, a defendant is presumed innocent until proven guilty beyond a reasonable doubt."
     },
     {
-      "trace_id": "fec13191-f3cc-405c-8ac0-a082baa32b9f",
+      "trace_id": "004a6465-fc3f-46d5-a34d-0065d80f9b68",
       "label": "good",
       "failure_mode": null,
       "domain": "law",
@@ -611,7 +611,7 @@
       "retrieved_context": "The Universal Declaration of Human Rights, adopted by the United Nations General Assembly in 1948, outlines fundamental rights to be universally protected."
     },
     {
-      "trace_id": "b520bef5-2d3d-41e8-8dae-af84201df81b",
+      "trace_id": "ae1d2b86-7b37-4242-abfb-18e3395be001",
       "label": "good",
       "failure_mode": null,
       "domain": "sports",
@@ -621,7 +621,7 @@
       "retrieved_context": "A standard soccer team fields eleven players at a time, including one goalkeeper."
     },
     {
-      "trace_id": "e765e983-528d-46a0-8e58-af1c61ca07fb",
+      "trace_id": "49780d0a-ed66-4a5c-8e03-f03e25f9e99d",
       "label": "good",
       "failure_mode": null,
       "domain": "sports",
@@ -631,7 +631,7 @@
       "retrieved_context": "The modern Olympic Games were revived in Athens, Greece in 1896, inspired by the ancient Olympic Games held in ancient Greece."
     },
     {
-      "trace_id": "16de67fd-e2d8-43e8-96fc-2dfa93a71ebb",
+      "trace_id": "3dc6dd28-864c-4b79-bb90-a6a6bc85fbe4",
       "label": "good",
       "failure_mode": null,
       "domain": "sports",
@@ -641,7 +641,7 @@
       "retrieved_context": "In American football, a touchdown is worth six points, with an additional point or two available afterward."
     },
     {
-      "trace_id": "0f5b675b-b7f2-4534-a039-2f93920b5082",
+      "trace_id": "c7d8d571-5239-4a43-a518-712742b45925",
       "label": "good",
       "failure_mode": null,
       "domain": "sports",
@@ -651,7 +651,7 @@
       "retrieved_context": "Association football, commonly known as soccer, is often referred to as 'the beautiful game' due to its global popularity and fluid style of play."
     },
     {
-      "trace_id": "d55e4037-7957-4881-b1cf-7e88b8b2b5f4",
+      "trace_id": "e8f47e0d-a3c9-44c5-a6f1-3677a7cfdc9f",
       "label": "good",
       "failure_mode": null,
       "domain": "sports",
@@ -661,7 +661,7 @@
       "retrieved_context": "The Olympic flag features five interlocking rings, representing the union of the five inhabited continents."
     },
     {
-      "trace_id": "4d6c724b-8770-48eb-b9f6-2d46bfb9a687",
+      "trace_id": "c8ea3be7-22d7-4723-8265-124658ed0287",
       "label": "good",
       "failure_mode": null,
       "domain": "food",
@@ -671,7 +671,7 @@
       "retrieved_context": "Traditional guacamole is made primarily from mashed avocados, often mixed with lime juice, salt, and onion."
     },
     {
-      "trace_id": "e746515f-cafd-435d-a00d-32159fe6b27a",
+      "trace_id": "ffd905f8-3f95-4c3b-94b7-b07ea5cf9d04",
       "label": "good",
       "failure_mode": null,
       "domain": "food",
@@ -681,7 +681,7 @@
       "retrieved_context": "Fermentation, a process in which yeast converts sugars into alcohol, is what turns grape juice into wine."
     },
     {
-      "trace_id": "50467d8e-baf1-457b-9ee5-1c1ff3487d8c",
+      "trace_id": "44d3a0db-b305-4076-89e2-d6b36ded0093",
       "label": "good",
       "failure_mode": null,
       "domain": "food",
@@ -691,7 +691,7 @@
       "retrieved_context": "Saffron, derived from the stigmas of the Crocus sativus flower, is one of the most expensive spices in the world by weight."
     },
     {
-      "trace_id": "38ec8217-eb95-4004-ad45-08a849bc7f7c",
+      "trace_id": "8a67fd9c-feda-498c-9e9c-0b9de120afdd",
       "label": "good",
       "failure_mode": null,
       "domain": "food",
@@ -701,7 +701,7 @@
       "retrieved_context": "Pizza is a traditional Italian dish made from a flattened dough base, typically topped with tomato sauce, cheese, and various other ingredients."
     },
     {
-      "trace_id": "ef66c3db-f5b2-4e2d-9087-18e039086402",
+      "trace_id": "a0865e95-88bc-45eb-bd38-6ba5c61c4280",
       "label": "good",
       "failure_mode": null,
       "domain": "food",
