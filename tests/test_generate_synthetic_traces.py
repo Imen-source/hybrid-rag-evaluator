@@ -1,6 +1,6 @@
 """Pure-logic tests for the synthetic trace generator -- no network, no API,
-no Docker. Just checks build_traces() produces the counts and invariants
-the Phase 3 spec requires."""
+no Docker. Checks build_traces() produces the expected counts and label
+invariants."""
 
 from __future__ import annotations
 

@@ -17,8 +17,6 @@ from .eval_routes import router as eval_router
 app = FastAPI(title="LLM Eval Ingestion API")
 app.include_router(eval_router)
 
-# Request rate + latency histogram, standard defaults (http_requests_total,
-# http_request_duration_seconds, etc.), exposed at GET /metrics.
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 

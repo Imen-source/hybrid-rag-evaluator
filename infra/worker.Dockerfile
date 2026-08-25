@@ -11,7 +11,7 @@ COPY requirements-mlflow.txt requirements-worker.txt ./
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements-worker.txt
 
-# Root-level judge-scoring modules, reused unmodified from the CLI tool.
+# Shared judge-scoring modules, also used by the root-level CLI (cli.py).
 COPY evaluator.py similarity.py prompts.py schemas.py dataset_eval.py ./
 COPY src ./src
 

@@ -1,106 +1,43 @@
 # Hybrid RAG Evaluator
 
-Hybrid RAG Evaluator is a local-first evaluation pipeline for retrieval-augmented generation (RAG) systems. It combines lightweight LLM judging with deterministic scoring so the pipeline remains useful even on modest hardware using local models such as phi through Ollama.
+A local-first evaluation pipeline for retrieval-augmented generation (RAG) systems. It scores `(question, context, answer)` triples on correctness, relevance, groundedness, and hallucination, combining LLM-as-judge scoring with deterministic semantic-similarity and keyword-overlap checks so it stays useful even on modest hardware with a local model (Ollama's `phi`) or against OpenAI.
 
-## Features
+Two ways to use it:
 
-- **Dataset Loading**: JSON dataset with question, context, and answer samples
-- **Hybrid Evaluation**: Combines LLM judging with deterministic semantic similarity and keyword overlap
-- **Metrics Computed**: correctness, relevance, groundedness, hallucination, explanation, semantic_similarity, keyword_overlap, confidence
-- **Aggregate Metrics**: Average scores plus hallucination_rate
-- **Caching**: LLM responses and embeddings cached for faster repeated runs
-- **Provider Support**: Local Ollama (phi) and OpenAI API (optional)
-- **Fallbacks**: Deterministic results if LLM fails or Ollama is unavailable
+- **CLI** (`cli.py`) — run the evaluator directly against a JSON dataset on one machine.
+- **Service mode** (`src/api/`, `src/workers/`) — a FastAPI ingestion API, a Redis/RQ worker pool, Postgres persistence, and MLflow tracking, so traces can be ingested and scored asynchronously and the results tracked over time. Monitored with Prometheus + Grafana.
 
-## Repository Layout
+See [docs/architecture.md](docs/architecture.md) for the full request flow, data model, and known scoping limitations.
 
-```
-rag_evaluator/
-├── cli.py               # Entry point
-├── metaflow_pipeline.py # Pipeline runner (Metaflow + local fallback)
-├── evaluator.py         # LLM evaluation, hybrid scoring, JSON handling
-├── dataset_eval.py      # Dataset loading and aggregate metrics
-├── prompts.py           # Evaluation prompt templates
-├── schemas.py           # Pydantic schemas for structured output
-├── similarity.py        # Semantic similarity & keyword overlap helpers
-├── cache.py             # Clear cached artifacts
-├── examples/            # Sample datasets
-├── results.json         # Aggregated results
-│
-├── src/api/              # FastAPI ingestion + eval-run service (reuses evaluator.py)
-├── src/workers/          # eval worker: judge scoring jobs + Prometheus metrics
-├── alembic/              # Postgres migrations for the service's traces/eval tables
-├── scripts/              # one-time synthetic trace generator + judge recall benchmark
-└── infra/                # docker-compose stack: Postgres, Redis, MLflow, API, worker,
-                           # Prometheus (infra/prometheus.yml), Grafana (infra/grafana/)
-```
-
-### Optional / Cleanup
-
-- `metrics.py` → can be merged into dataset_eval.py (thin wrapper)
-- Delete: `test_openai_key.py`, `debug.log`
-- Ignore: `__pycache__`, `eval_cache/`
-
-## Installation
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-pip install ollama huggingface_hub sentence-transformers
-```
-
-## Usage
-
-### Run with Ollama locally (phi)
-
-```bash
-python cli.py --provider ollama --model phi
-```
-
-**Optional flags:**
-
-```bash
---use-hybrid true    # Combine LLM + semantic scoring
---num-runs 2         # Number of evaluation passes per sample
---verbose true       # Mirror debug info to console
-```
-
-### Run with OpenAI API
-
-```bash
-python cli.py --provider openai --model gpt-4o-mini
-```
-
-Set your API key:
-
-```powershell
-$env:OPENAI_API_KEY="your_openai_key_here"
-```
-
-## Service Mode (API + Worker + MLflow)
-
-For team/CI use beyond the single-machine CLI, the same evaluator core (`evaluator.py`) is wrapped in a small async service: a FastAPI ingestion API, a Redis/RQ worker pool that runs judge scoring in the background, Postgres persistence for traces and results, and MLflow experiment tracking per eval run. See [docs/architecture.md](docs/architecture.md) for the full request flow, data model, and known scoping limitations (e.g. the API's DB access is sync — the RQ queue is what's async).
+## Architecture
 
 ```
 Client → API (FastAPI) → Postgres (traces, eval_runs, eval_results)
                        └→ Redis/RQ queue → Worker(s) → evaluator.py → MLflow
 ```
 
-### Quick start
+The worker and the CLI both call the same `evaluate_answer()` in `evaluator.py` — service mode is a thin async wrapper around the same judge core, not a separate implementation.
+
+## Quick start (service mode)
 
 ```bash
 cp infra/.env.example infra/.env
 docker compose -f infra/docker-compose.yml --env-file infra/.env up --build
 ```
 
-This starts Postgres, Redis, MLflow, the API (Alembic migrations run automatically on boot), and one worker. Scale workers with:
+This is a cold start: it builds the API, worker, and MLflow images; starts Postgres, Redis, and MLflow; runs Alembic migrations automatically on the API container's boot; and brings up one worker plus Prometheus and Grafana. No manual setup steps beyond copying the env file.
 
 ```bash
-docker compose -f infra/docker-compose.yml --env-file infra/.env up --build --scale worker=3
-```
+# ingest a trace
+curl -X POST localhost:8000/traces -H 'content-type: application/json' -d '{
+  "input": "What is the capital of France?",
+  "output": "Paris is the capital of France.",
+  "retrieved_context": "France'"'"'s capital city is Paris."
+}'
 
-### API
+# score everything pending
+curl -X POST localhost:8000/eval/run -H 'content-type: application/json' -d '{"scope": "all_pending"}'
+```
 
 | Endpoint | Description |
 |---|---|
@@ -109,155 +46,71 @@ docker compose -f infra/docker-compose.yml --env-file infra/.env up --build --sc
 | `POST /eval/run` | Start a judge-scoring run over `trace_ids` or `scope: "all_pending"` |
 | `GET /eval/runs/{id}` | Poll run status and per-trace results |
 | `GET /health` | Liveness + DB connectivity check |
+| `GET /metrics` | Prometheus exposition (request rate/latency) |
 
-Each `/eval/run` fans out one background job per trace to the worker pool; the worker calls `evaluate_answer()` from `evaluator.py` unmodified, persists per-trace scores, and — once every trace in the run has finished — logs the run's aggregate metrics to MLflow.
+Scale workers with `--scale worker=N`. Judge provider/model and worker behavior are set via env vars in `infra/.env` (see `infra/.env.example`): `JUDGE_PROVIDER`, `JUDGE_MODEL`, `JUDGE_USE_HYBRID`, `JUDGE_NUM_RUNS`, `JUDGE_TEMPERATURE`, `OPENAI_API_KEY`, `OLLAMA_HOST`.
 
-### Configuration
-
-Judge provider/model and worker behavior are set via env vars (see `infra/.env.example`): `JUDGE_PROVIDER`, `JUDGE_MODEL`, `JUDGE_USE_HYBRID`, `JUDGE_NUM_RUNS`, `JUDGE_TEMPERATURE`, `OPENAI_API_KEY`, `OLLAMA_HOST`.
-
-### Judge Detection Benchmark (synthetic traces)
-
-`scripts/generate_synthetic_traces.py` and `scripts/compute_detection_recall.py` are one-time/on-demand scripts — not part of the running stack — that measure how well the judge actually catches bad RAG output. They run from the host against a live stack (`docker compose up` from the Quick start above), not inside a container.
+## CLI (single machine)
 
 ```bash
-pip install -r requirements-dev.txt   # for httpx, if not already installed
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+pip install ollama huggingface_hub sentence-transformers
 
-# 1. Generate ~70 labeled traces (12 deliberately bad) and post them to the API.
-#    Writes scripts/synthetic_manifest.json (ground truth), checked into the repo.
+python cli.py --provider ollama --model phi --dataset examples/sample.json
+```
+
+Flags: `--use-hybrid true` (combine LLM + semantic scoring), `--num-runs 2` (evaluation passes per sample, averaged), `--verbose true`. `--provider openai --model gpt-4o-mini` works the same way with `OPENAI_API_KEY` set.
+
+Final correctness score: `0.5 * llm_correctness + 0.3 * semantic_similarity + 0.2 * keyword_overlap`. If the LLM call fails or produces malformed output, deterministic scoring still returns a valid result.
+
+## Judge detection benchmark
+
+`scripts/generate_synthetic_traces.py` and `scripts/compute_detection_recall.py` are a one-time/on-demand benchmark (not part of the running stack): they generate 70 labeled synthetic traces (58 good, 12 deliberately bad — via context-swap or a hallucinated answer), post them to a live stack, trigger a real eval run, and compare the judge's output against the ground-truth labels.
+
+```bash
+pip install -r requirements-dev.txt
 python -m scripts.generate_synthetic_traces --api-url http://localhost:8000
-
-# 2. Trigger a real eval run over exactly those traces, poll it to completion,
-#    and compare the judge's output against the manifest's labels.
 python -m scripts.compute_detection_recall --api-url http://localhost:8000
 ```
 
-The second script prints recall / precision / false-positive-rate and writes the full per-trace breakdown to `scripts/detection_recall_results.json`. Re-running step 2 alone recomputes the numbers against the same traces without regenerating them, as long as `scripts/synthetic_manifest.json` still points at trace IDs that exist in the database.
+**Measured result** (`scripts/detection_recall_results.json`, local Ollama `phi`, single CPU machine):
 
-### Monitoring (Prometheus + Grafana)
+| Recall | Precision | False positive rate |
+|---|---|---|
+| 33.3% | 66.7% | 3.4% |
 
-Unlike the one-time benchmark scripts above, this is meant to stay live: Prometheus and Grafana start with the rest of the stack (`docker compose up` from the Quick start above) and keep scraping/rendering as long as it's running — there's no separate script to invoke.
+`phi` is a small model running on CPU — it misses about two-thirds of the injected bad traces. This is the judge's real, measured detection rate on this benchmark, not a target or an estimate; a larger or hosted model would be expected to score higher, but that hasn't been measured here.
 
-- **Grafana**: http://localhost:3000 (default `admin` / `admin`, set via `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD`). The "Hybrid RAG Evaluator" dashboard is provisioned automatically on startup — no manual datasource setup or dashboard import.
-- **Prometheus**: http://localhost:9090, scraping the API's `GET /metrics` (request rate + latency, via `prometheus-fastapi-instrumentator`) and the worker's own metrics server on port `9100` (judge latency histogram, eval throughput counter, correctness/relevance/groundedness score histograms, hallucination counter — see `src/workers/metrics.py`). Scrape config: `infra/prometheus.yml`.
-- The worker's `/metrics` port (`WORKER_METRICS_PORT`, default 9100) is intentionally not published to the host, since scaling worker replicas (`--scale worker=N`) would collide on one host port; Prometheus reaches it over the internal Docker network instead.
-- The dashboard's score-distribution and hallucination-rate panels only reflect traces evaluated *after* the instrumented worker started (Prometheus has no way to backfill historical DB rows) — running the judge detection benchmark above, or hitting `/eval/run` a few times, will populate them.
+## Monitoring (Prometheus + Grafana)
 
-### Tests
+Prometheus and Grafana start with the rest of the stack and stay live for as long as it's running — no separate script to invoke.
+
+- **Grafana**: http://localhost:3000 (default `admin`/`admin`). The dashboard is provisioned automatically: request rate, judge latency p50/p95, eval throughput, correctness/relevance/groundedness distributions, hallucination rate.
+- **Prometheus**: http://localhost:9090, scraping the API's `/metrics` and the worker's own metrics server (`src/workers/metrics.py`).
+- Score-distribution and throughput panels only reflect traces evaluated *after* the worker started — run the benchmark above, or hit `/eval/run` a few times, to populate them.
+
+## Testing
 
 ```bash
 pip install -r requirements-dev.txt
 pytest
 ```
 
-Tests spin up real, ephemeral Postgres and Redis containers via testcontainers (Docker required) and run actual Alembic migrations — only the LLM call itself is mocked.
+Tests spin up real, ephemeral Postgres and Redis containers via testcontainers (Docker required) and run the actual Alembic migrations; only the LLM call and the embedding-model load are mocked. CI (`.github/workflows/ci.yml`) runs lint (ruff) → this test suite → a build of all three Docker images, on every push. The Ollama-dependent detection benchmark above is not part of CI — see `docs/architecture.md` for why.
 
-## Hybrid Scoring Logic
+## Status
 
-Final score combines:
+Runs locally via `docker compose`; there is no persistent or public deployment of this stack. See [docs/architecture.md#known-limitations](docs/architecture.md#known-limitations) for the scoping decisions behind that and a few other design tradeoffs (sync DB access under an otherwise-async job queue, single-target Prometheus scraping under `--scale`).
 
-```
-0.5 * llm_correctness + 0.3 * semantic_similarity + 0.2 * keyword_overlap
-```
+## Known issues
 
-If LLM output is malformed or fails → deterministic scoring still returns a valid JSON payload
+- Small local models (e.g. `phi`) can produce inconsistent explanations and, per the benchmark above, miss a meaningful share of bad traces.
+- Semantic similarity is a helpful signal but not a replacement for a gold reference answer.
+- Ollama must be running for the `ollama` provider; otherwise deterministic fallback scoring is used.
+- Windows users may see HuggingFace symlink warnings from `sentence-transformers` — non-blocking.
 
-## Example Dataset
+## License
 
-```json
-[
-  {
-    "question": "What is the capital of France?",
-    "context": "France's capital city is Paris.",
-    "answer": "Paris is the capital of France."
-  }
-]
-```
-
-## Example Output
-
-### Sample-level
-
-```json
-{
-  "correctness": 0.9234,
-  "relevance": 0.9235,
-  "groundedness": 0.9234,
-  "hallucination": false,
-  "explanation": "Paris is the capital city of France.",
-  "semantic_similarity": 0.9114,
-  "keyword_overlap": 0.75,
-  "confidence": 0.9645
-}
-```
-
-### Aggregate metrics
-
-```json
-{
-  "avg_correctness": 0.7877,
-  "avg_relevance": 0.8552,
-  "avg_groundedness": 0.8369,
-  "avg_semantic_similarity": 0.8002,
-  "avg_keyword_overlap": 0.6548,
-  "avg_confidence": 0.9201,
-  "hallucination_rate": 0.0,
-  "sample_count": 3
-}
-```
-
-## Logging & Debugging
-
-- Raw LLM output, retries, and fallbacks logged to `debug.log`
-- Use `--verbose true` to mirror logs to console
-- Malformed output triggers retry with stricter prompt
-
-## Caching
-
-- **LLM results**: `eval_cache/`
-- **Embeddings**: `eval_cache/embeddings/`
-
-### Clear cache
-
-```bash
-python cache.py --cache-dir eval_cache
-```
-
-## Known Issues
-
-- Small local models (e.g., phi) may produce inconsistent explanations
-- Semantic similarity helps but is not a replacement for a gold reference
-- Keyword overlap is lightweight; paraphrases can reduce accuracy
-- Ollama must be running; otherwise deterministic fallback is used
-- Windows users may see HuggingFace symlink warnings — non-blocking
-
-## Future Improvements
-
-- Support for larger local models if more system memory is available
-- Improved fallback handling for multi-step or long-context questions
-- Optional visualizations for metric distributions
-- Better error reporting for hybrid mode inconsistencies
-- Potential integration with cloud LLMs beyond OpenAI
-
-## Sanity Checks
-
-### Syntax check
-
-```bash
-python -m py_compile cli.py dataset_eval.py evaluator.py similarity.py schemas.py prompts.py metaflow_pipeline.py cache.py
-```
-
-### Reset cache
-
-```bash
-python cache.py
-```
-
-## Goals Achieved
-
-- ✅ Fully functional local-first RAG evaluation pipeline
-- ✅ Supports multiple LLM providers: OpenAI + Ollama (phi)
-- ✅ Structured JSON output compatible with downstream metrics
-- ✅ Optional hybrid semantic scoring
-- ✅ Modular codebase with CI (lint, build, and a real test suite backed by ephemeral Postgres/Redis/MLflow, not mocks) — see `.github/workflows/ci.yml`. Not deployed anywhere; runs locally via `docker compose`, see [docs/architecture.md](docs/architecture.md#known-limitations) for known scoping limits.
-- ✅ Optional service mode: FastAPI + Postgres + Redis/RQ worker + MLflow tracking
+MIT — see [LICENSE](LICENSE).

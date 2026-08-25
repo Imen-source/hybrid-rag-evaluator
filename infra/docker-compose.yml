@@ -46,6 +46,13 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-traces}
       REDIS_URL: redis://redis:6379/0
+      # Must match the worker's values below: the API stamps these onto the
+      # eval_runs row (and MLflow copies them from there) at /eval/run time,
+      # but the worker is what actually calls the judge -- if the two
+      # diverge, the recorded provider/model silently misdescribes what ran.
+      JUDGE_PROVIDER: ${JUDGE_PROVIDER:-openai}
+      JUDGE_MODEL: ${JUDGE_MODEL:-}
+      EVAL_WORKER_COUNT: ${EVAL_WORKER_COUNT:-1}
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:

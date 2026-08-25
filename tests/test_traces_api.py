@@ -40,7 +40,7 @@ def test_create_then_retrieve_trace(test_client):
     assert created["output"] == "Paris is the capital of France."
     assert created["retrieved_context"] == "France's capital city is Paris."
     assert created["metadata"] == {"model": "gpt-4o-mini"}
-    uuid.UUID(created["id"])  # raises if not a valid UUID
+    uuid.UUID(created["id"])
 
     get_resp = test_client.get(f"/traces/{created['id']}")
     assert get_resp.status_code == 200
@@ -69,7 +69,6 @@ def test_get_missing_trace_returns_404(test_client):
 
 
 def test_create_trace_validation_error_on_malformed_payload(test_client):
-    # Missing required "output" field.
     resp = test_client.post("/traces", json={"input": "only input"})
     assert resp.status_code == 422
 

@@ -1,9 +1,4 @@
-"""RQ job(s) executed by the eval worker process.
-
-Reuses the existing, synchronous judge-scoring implementation in
-evaluator.py unmodified -- this module is glue around it, not a
-reimplementation.
-"""
+"""RQ job(s) executed by the eval worker process."""
 
 from __future__ import annotations
 

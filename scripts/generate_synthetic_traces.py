@@ -40,7 +40,7 @@ import httpx
 from scripts.synthetic_facts import FACTS
 
 SEED = 42
-BAD_COUNT = 12  # within the requested 10-15 range
+BAD_COUNT = 12  # ~17% of the bank -- enough bad traces for a meaningful recall/precision signal
 SWAP_OFFSET = len(FACTS) // 2  # 35; crosses domains since domains are grouped 5-per-block
 
 REPO_ROOT = Path(__file__).resolve().parent.parent

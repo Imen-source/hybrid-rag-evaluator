@@ -1,12 +1,12 @@
 """Eval-run tests backed by real Postgres + real Redis/RQ + real MLflow
 (file-based, temp dir).
 
-Only the LLM call and the sentence-transformers embedding load are mocked
-(per the "CI shouldn't make real API calls" requirement, plus the embedding
-model requires a real network download otherwise). Everything else --
-job enqueue/dequeue through real RQ, DB status transitions, run
-finalization, and MLflow run creation -- runs for real, and MLflow runs are
-read back and asserted on, not just "no exception thrown".
+Only the LLM call and the sentence-transformers embedding load are mocked --
+CI has no LLM API key and the embedding model would otherwise need a real
+network download. Everything else -- job enqueue/dequeue through real RQ,
+DB status transitions, run finalization, and MLflow run creation -- runs for
+real, and MLflow runs are read back and asserted on, not just "no exception
+thrown".
 """
 
 from __future__ import annotations
@@ -30,10 +30,9 @@ FAILURE_MARKER = "TRIGGER_FAILURE"
 
 @pytest.fixture(scope="session")
 def eval_client(api_app, redis_db_url):
-    # tempfile.mkdtemp(), not pytest's tmp_path_factory: this machine has a
-    # stale, permission-locked leftover under the default pytest temp root
-    # (C:\Users\<user>\AppData\Local\Temp\pytest-of-<user>) from an unrelated
-    # prior session, which makes tmp_path_factory error out entirely.
+    # tempfile.mkdtemp(), not pytest's tmp_path_factory: on Windows a
+    # permission-locked leftover under the default pytest temp root can make
+    # tmp_path_factory error out entirely rather than just skip it.
     session_dir = tempfile.mkdtemp(prefix="eval_api_test_")
     mlruns_dir = os.path.join(session_dir, "mlruns")
     os.makedirs(mlruns_dir, exist_ok=True)
@@ -151,7 +150,7 @@ def test_mlflow_run_is_created_and_queryable(mock_call_model, mock_similarity, e
     assert mlflow_run_id
 
     client = MlflowClient(tracking_uri=os.environ["MLFLOW_TRACKING_URI"])
-    mlflow_run = client.get_run(mlflow_run_id)  # raises if it doesn't really exist
+    mlflow_run = client.get_run(mlflow_run_id)
 
     assert mlflow_run.data.params["judge_provider"] == "openai"
     assert mlflow_run.data.params["judge_model"] == "gpt-4o-mini-test"
