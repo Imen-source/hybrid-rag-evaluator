@@ -32,7 +32,7 @@ class EvalRunCreate(BaseModel):
     scope: Literal["all_pending"] | None = None
 
     @model_validator(mode="after")
-    def _check_target(self) -> "EvalRunCreate":
+    def _check_target(self) -> EvalRunCreate:
         has_ids = bool(self.trace_ids)
         has_scope = self.scope is not None
         if has_ids == has_scope:

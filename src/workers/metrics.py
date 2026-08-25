@@ -29,6 +29,16 @@ JUDGE_LATENCY_SECONDS = Histogram(
     buckets=(0.5, 1, 2, 5, 10, 20, 30, 60, 90, 120, 180, 300),
 )
 
+# Eval throughput (traces/sec) is derived in Grafana as rate(evals_completed_total[...]),
+# the same way judge_latency_seconds' rate/percentiles are derived rather than
+# precomputed here -- one counter, labeled the same way as the latency
+# histogram, so both are queried consistently off the same "status" label.
+EVALS_COMPLETED_TOTAL = Counter(
+    "evals_completed_total",
+    "Count of eval jobs the worker has finished (terminal status), for throughput (traces/sec via rate()).",
+    labelnames=("status",),
+)
+
 # Score distributions, 0.0-1.0 range, only observed for completed evals.
 _SCORE_BUCKETS = (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
 

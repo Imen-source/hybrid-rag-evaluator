@@ -31,9 +31,10 @@ REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 @pytest.fixture(scope="session")
 def postgres_db_url():
-    from alembic import command
     from alembic.config import Config
     from testcontainers.postgres import PostgresContainer
+
+    from alembic import command
 
     with PostgresContainer("postgres:16-alpine") as pg:
         db_url = pg.get_connection_url()

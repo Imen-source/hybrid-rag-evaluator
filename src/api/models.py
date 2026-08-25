@@ -51,7 +51,7 @@ class EvalRun(Base):
     mlflow_run_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    results: Mapped[list["EvalResult"]] = relationship(
+    results: Mapped[list[EvalResult]] = relationship(
         back_populates="eval_run", order_by="EvalResult.created_at"
     )
 
@@ -86,4 +86,4 @@ class EvalResult(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
-    eval_run: Mapped["EvalRun"] = relationship(back_populates="results")
+    eval_run: Mapped[EvalRun] = relationship(back_populates="results")

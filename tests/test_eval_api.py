@@ -137,7 +137,6 @@ def test_eval_run_end_to_end_with_explicit_trace_ids(mock_call_model, mock_simil
 @patch("similarity.semantic_similarity", side_effect=_fake_semantic_similarity)
 @patch("evaluator.call_model", side_effect=_fake_call_model)
 def test_mlflow_run_is_created_and_queryable(mock_call_model, mock_similarity, eval_client):
-    import mlflow
     from mlflow.tracking import MlflowClient
 
     trace_id = _create_trace(eval_client)

@@ -6,7 +6,7 @@ import argparse
 import json
 import os
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from dataset_eval import aggregate_metrics, dataset_digest, load_dataset
@@ -87,7 +87,7 @@ def build_report(
             "dataset_path": args.dataset_path,
             "dataset_hash": dataset_hash,
             "run_started_at": run_started_at,
-            "run_completed_at": datetime.now(timezone.utc).isoformat(),
+            "run_completed_at": datetime.now(UTC).isoformat(),
             "results_path": args.results_path,
             "orchestrator": args.orchestrator,
         },
@@ -121,7 +121,7 @@ def save_report(results_path: str, report: dict) -> str:
 def run_pipeline(args: PipelineArgs, run_id: str, flow_name: str) -> str:
     """Run the logical pipeline steps sequentially."""
     ensure_api_key_available(args)
-    run_started_at = datetime.now(timezone.utc).isoformat()
+    run_started_at = datetime.now(UTC).isoformat()
 
     print("Step: load_dataset")
     dataset_hash = dataset_digest(args.dataset_path)
@@ -253,7 +253,7 @@ if METAFLOW_AVAILABLE:
                 orchestrator="metaflow",
             )
             ensure_api_key_available(self.pipeline_args)
-            self.run_started_at = datetime.now(timezone.utc).isoformat()
+            self.run_started_at = datetime.now(UTC).isoformat()
             print("Metaflow is available. Running the managed flow.")
             print(json.dumps(asdict(self.pipeline_args), indent=2))
             self.next(self.load_dataset)
@@ -352,6 +352,6 @@ if __name__ == "__main__":
         print("Falling back to the local Windows-safe runner.")
         run_pipeline(
             args=fallback_args,
-            run_id=f"local-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+            run_id=f"local-{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
             flow_name="RAGEvaluationFlowLocal",
         )

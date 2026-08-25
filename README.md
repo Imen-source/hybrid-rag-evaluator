@@ -80,7 +80,7 @@ $env:OPENAI_API_KEY="your_openai_key_here"
 
 ## Service Mode (API + Worker + MLflow)
 
-For team/CI use beyond the single-machine CLI, the same evaluator core (`evaluator.py`) is wrapped in a small async service: a FastAPI ingestion API, a Redis/RQ worker pool that runs judge scoring in the background, Postgres persistence for traces and results, and MLflow experiment tracking per eval run.
+For team/CI use beyond the single-machine CLI, the same evaluator core (`evaluator.py`) is wrapped in a small async service: a FastAPI ingestion API, a Redis/RQ worker pool that runs judge scoring in the background, Postgres persistence for traces and results, and MLflow experiment tracking per eval run. See [docs/architecture.md](docs/architecture.md) for the full request flow, data model, and known scoping limitations (e.g. the API's DB access is sync — the RQ queue is what's async).
 
 ```
 Client → API (FastAPI) → Postgres (traces, eval_runs, eval_results)
@@ -139,7 +139,7 @@ The second script prints recall / precision / false-positive-rate and writes the
 Unlike the one-time benchmark scripts above, this is meant to stay live: Prometheus and Grafana start with the rest of the stack (`docker compose up` from the Quick start above) and keep scraping/rendering as long as it's running — there's no separate script to invoke.
 
 - **Grafana**: http://localhost:3000 (default `admin` / `admin`, set via `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD`). The "Hybrid RAG Evaluator" dashboard is provisioned automatically on startup — no manual datasource setup or dashboard import.
-- **Prometheus**: http://localhost:9090, scraping the API's `GET /metrics` (request rate + latency, via `prometheus-fastapi-instrumentator`) and the worker's own metrics server on port `9100` (judge latency histogram, correctness/relevance/groundedness score histograms, hallucination counter — see `src/workers/metrics.py`). Scrape config: `infra/prometheus.yml`.
+- **Prometheus**: http://localhost:9090, scraping the API's `GET /metrics` (request rate + latency, via `prometheus-fastapi-instrumentator`) and the worker's own metrics server on port `9100` (judge latency histogram, eval throughput counter, correctness/relevance/groundedness score histograms, hallucination counter — see `src/workers/metrics.py`). Scrape config: `infra/prometheus.yml`.
 - The worker's `/metrics` port (`WORKER_METRICS_PORT`, default 9100) is intentionally not published to the host, since scaling worker replicas (`--scale worker=N`) would collide on one host port; Prometheus reaches it over the internal Docker network instead.
 - The dashboard's score-distribution and hallucination-rate panels only reflect traces evaluated *after* the instrumented worker started (Prometheus has no way to backfill historical DB rows) — running the judge detection benchmark above, or hitting `/eval/run` a few times, will populate them.
 
@@ -259,5 +259,5 @@ python cache.py
 - ✅ Supports multiple LLM providers: OpenAI + Ollama (phi)
 - ✅ Structured JSON output compatible with downstream metrics
 - ✅ Optional hybrid semantic scoring
-- ✅ Clean, modular, production-ready code
+- ✅ Modular codebase with CI (lint, build, and a real test suite backed by ephemeral Postgres/Redis/MLflow, not mocks) — see `.github/workflows/ci.yml`. Not deployed anywhere; runs locally via `docker compose`, see [docs/architecture.md](docs/architecture.md#known-limitations) for known scoping limits.
 - ✅ Optional service mode: FastAPI + Postgres + Redis/RQ worker + MLflow tracking

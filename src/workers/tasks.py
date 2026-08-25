@@ -14,7 +14,6 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from evaluator import EvaluatorConfig, evaluate_answer
-
 from src.api import models
 from src.api.db import SessionLocal
 from src.workers import metrics
@@ -81,6 +80,7 @@ def run_trace_eval(eval_run_id: str, trace_id: str) -> None:
             result_row.status = "completed"
             result_row.error = None
             metrics.JUDGE_LATENCY_SECONDS.labels(status="completed").observe(elapsed_ms / 1000.0)
+            metrics.EVALS_COMPLETED_TOTAL.labels(status="completed").inc()
             metrics.EVAL_CORRECTNESS.observe(scores["correctness"])
             metrics.EVAL_RELEVANCE.observe(scores["relevance"])
             metrics.EVAL_GROUNDEDNESS.observe(scores["groundedness"])
@@ -91,6 +91,7 @@ def run_trace_eval(eval_run_id: str, trace_id: str) -> None:
             result_row.error = str(exc)
             result_row.latency_ms = elapsed_ms
             metrics.JUDGE_LATENCY_SECONDS.labels(status="failed").observe(elapsed_ms / 1000.0)
+            metrics.EVALS_COMPLETED_TOTAL.labels(status="failed").inc()
         session.commit()
 
         _maybe_finalize_run(session, run_uuid)

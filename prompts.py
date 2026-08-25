@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 EVALUATION_SYSTEM_PROMPT = (
     "You are a strict evaluator for retrieval-augmented generation answers. "
     "Score the answer against the provided question and context. "

@@ -36,6 +36,7 @@ def test_worker_metrics_expose_expected_names_after_observations():
     from src.workers import metrics
 
     metrics.JUDGE_LATENCY_SECONDS.labels(status="completed").observe(12.3)
+    metrics.EVALS_COMPLETED_TOTAL.labels(status="completed").inc()
     metrics.EVAL_CORRECTNESS.observe(0.9)
     metrics.EVAL_RELEVANCE.observe(0.8)
     metrics.EVAL_GROUNDEDNESS.observe(0.7)
@@ -45,6 +46,7 @@ def test_worker_metrics_expose_expected_names_after_observations():
 
     for expected in (
         "judge_latency_seconds",
+        "evals_completed_total",
         "eval_correctness",
         "eval_relevance",
         "eval_groundedness",

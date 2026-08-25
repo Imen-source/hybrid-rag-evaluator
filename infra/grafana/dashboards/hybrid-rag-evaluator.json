@@ -158,6 +158,30 @@
           "legendFormat": "hallucination rate"
         }
       ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Eval throughput (traces/sec)",
+      "description": "Rate of eval jobs finished by the worker, by terminal status, recorded at the same points as judge_latency_seconds in tasks.py. Source: evals_completed_total counter.",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(evals_completed_total[5m])) by (status)",
+          "legendFormat": "status {{status}}"
+        },
+        {
+          "refId": "B",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(evals_completed_total[5m]))",
+          "legendFormat": "total"
+        }
+      ]
     }
   ]
 }

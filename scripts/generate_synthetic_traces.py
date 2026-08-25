@@ -31,8 +31,8 @@ from __future__ import annotations
 import argparse
 import json
 import random
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -153,7 +153,7 @@ def post_traces(traces: list[TraceSpec], api_url: str, client: httpx.Client) -> 
 def write_manifest(entries: list[dict], api_url: str, seed: int, manifest_path: Path) -> None:
     bad_count = sum(1 for e in entries if e["label"] == "bad")
     manifest = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "api_url": api_url,
         "seed": seed,
         "total": len(entries),
