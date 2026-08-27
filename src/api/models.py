@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, false, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -50,6 +50,11 @@ class EvalRun(Base):
     worker_count: Mapped[int] = mapped_column(Integer, nullable=False)
     mlflow_run_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # At most one row may have is_baseline=True at a time -- enforced by a
+    # partial unique index in migration 0003, not just application logic.
+    is_baseline: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=false()
+    )
 
     results: Mapped[list[EvalResult]] = relationship(
         back_populates="eval_run", order_by="EvalResult.created_at"

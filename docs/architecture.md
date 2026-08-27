@@ -38,10 +38,73 @@ flowchart LR
 | `/traces/{id}` | GET | Fetch one trace → 200 / 404 |
 | `/eval/run` | POST | Start a judge-scoring run over `trace_ids` **or** `scope: "all_pending"` (exactly one required) → 202, `{run_id, status, trace_count}` |
 | `/eval/runs/{id}` | GET | Poll run status + all per-trace results → 200 / 404 |
+| `/eval/runs/{id}/mark_baseline` | POST | Designate this run as the baseline `/compare` measures against → 200 / 400 (not `completed`) / 404 |
+| `/eval/runs/{id}/compare` | GET | Diff this run's aggregate metrics against the current baseline run, with a regression verdict → 200 / 400 (not `completed`, is itself the baseline, or no baseline set) / 404 |
 | `/health` | GET | Liveness + a real `SELECT 1` DB round-trip → 200 / 503 |
 | `/metrics` | GET | Prometheus exposition (request rate/latency), via `prometheus-fastapi-instrumentator` |
 
-Data model (`src/api/models.py`): `traces` → `eval_runs` (1) → `eval_results` (N, one per trace in that run, FK to both `eval_runs` and `traces`).
+Data model (`src/api/models.py`): `traces` → `eval_runs` (1) → `eval_results` (N, one per trace in that run, FK to both `eval_runs` and `traces`). `eval_runs.is_baseline` (migration `0003`) marks the single run `/compare` diffs against; a partial unique index (`is_baseline = true`) enforces at most one at a time.
+
+## Baseline comparison, regression detection, and the gate
+
+`POST /eval/runs/{id}/mark_baseline` marks a completed run as *the* baseline —
+a single mutable pointer, not a set. Marking a new run unsets whichever run
+was previously the baseline in the same transaction (see the docstring on
+`mark_baseline()` in `src/api/eval_routes.py`), rather than requiring an
+explicit unmark first: a baseline is meant to move forward over time (e.g.
+"the last known-good run"), and requiring an unmark step would just add
+friction without protecting anything real. The partial unique index from
+migration `0003` is what actually guarantees at most one baseline exists,
+independent of that application logic.
+
+`GET /eval/runs/{id}/compare` aggregates both the target run's and the
+baseline's completed results with the existing `aggregate_metrics()`
+(`dataset_eval.py` — unchanged, reused as-is), diffs them
+(`compute_metric_deltas()`), and applies a regression gate
+(`evaluate_regression()`) to three of the four compared metrics:
+
+- **`avg_correctness` / `avg_groundedness`**: flagged on a **relative** drop
+  of more than 5%. Relative, not absolute, because both are 0–1 scores whose
+  baseline level varies a lot by dataset/judge — a 0.05 absolute drop is
+  huge against a 0.95 baseline and noise against a 0.20 one.
+- **`hallucination_rate`**: flagged on an **absolute** increase of more than
+  5 percentage points instead, because it's already a rate: relative framing
+  breaks down near a 0 baseline (one hallucination on a previously-perfect
+  baseline would be an "infinite" relative increase), and an absolute
+  point-increase is what "hallucinations got noticeably more common"
+  actually means.
+- **`avg_relevance`** is reported in the diff but does not gate — it reflects
+  topical/retrieval fit more than correctness or safety, and is the judge's
+  noisiest score in practice. Gating on it risked blocking good changes over
+  phrasing variance rather than catching real regressions.
+
+A run trips the gate if it crosses **any one** of the three thresholds —
+these are independent failure modes, not a combined score. The full
+reasoning lives as a docstring on `evaluate_regression()` in
+`dataset_eval.py`, next to the thresholds themselves, so the two can't drift
+apart.
+
+`scripts/check_regression.py` is the actual, callable gate: it calls
+`GET /eval/runs/{id}/compare` for a given run against the current baseline
+and exits `1` if `regressed: true` (or if the compare call itself fails —
+e.g. no baseline set), `0` otherwise. **It is not wired into
+`.github/workflows/ci.yml`.** Every call needs a real, completed eval run
+scored by a live judge against a live API + Postgres — the same constraint
+that already keeps `scripts/compute_detection_recall.py` out of CI (see
+"Known limitations" below). It's meant to be run by hand, or from a
+deployment pipeline that already has a live stack and a completed run to
+check:
+
+```bash
+python -m scripts.check_regression --api-url http://localhost:8000 --run-id <uuid>
+```
+
+This is what backs the "regression detection, baselines, and gating" language
+used to describe this project elsewhere (e.g. on a CV) — as of this feature,
+those are real, callable code paths (`compute_metric_deltas`/
+`evaluate_regression` in `dataset_eval.py`, the `/compare` endpoint, and
+`scripts/check_regression.py`'s exit code), not just something a human could
+eyeball across two Grafana panels or two MLflow runs.
 
 ## Data stores
 
@@ -92,6 +155,16 @@ These are scoping decisions carried through deliberately, not bugs waiting to be
   meaningful regression signal. CI mocks the judge call everywhere (see
   `tests/test_eval_api.py`); the benchmark is a separate, manually-triggered
   measurement.
+- **The regression gate (`scripts/check_regression.py`) is not CI-gated either, for the
+  same reason.** It calls a live judge through a live API for both the candidate and
+  baseline runs it compares, which a GitHub-hosted runner can't provide without a real
+  Ollama/OpenAI backend. Unlike the recall benchmark, this one doesn't need the *same*
+  fixed traces to be meaningful — any live stack with a marked baseline works — so
+  wiring it into a deployment pipeline that already has one is a real option; it's just
+  not part of `ci.yml` today. The endpoint and exit code it relies on
+  (`/eval/runs/{id}/compare`, `scripts/check_regression.py`) are tested against real
+  Postgres and demonstrated against a real Ollama/phi judge — see the "Baseline
+  comparison, regression detection, and the gate" section above.
 - **Worker metrics don't survive `--scale worker=N`.** `infra/prometheus.yml` scrapes
   a single static target (`worker:9100`); with multiple worker replicas, Docker's
   round-robin DNS means Prometheus only ever sees whichever one replica a given scrape

@@ -79,4 +79,27 @@ class EvalRunRead(BaseModel):
     worker_count: int
     mlflow_run_id: str | None
     error: str | None
+    is_baseline: bool
     results: list[EvalResultRead] = Field(default_factory=list)
+
+
+class MetricDelta(BaseModel):
+    baseline: float
+    candidate: float
+    delta: float
+    relative_delta: float | None
+
+
+class RegressionThresholds(BaseModel):
+    correctness_relative_drop: float
+    groundedness_relative_drop: float
+    hallucination_rate_absolute_increase: float
+
+
+class EvalRunCompareRead(BaseModel):
+    candidate_run_id: uuid.UUID
+    baseline_run_id: uuid.UUID
+    metrics: dict[str, MetricDelta]
+    thresholds: RegressionThresholds
+    regressed: bool
+    regressed_reasons: list[str]

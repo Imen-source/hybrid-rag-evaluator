@@ -45,6 +45,8 @@ curl -X POST localhost:8000/eval/run -H 'content-type: application/json' -d '{"s
 | `GET /traces/{id}` | Fetch a trace |
 | `POST /eval/run` | Start a judge-scoring run over `trace_ids` or `scope: "all_pending"` |
 | `GET /eval/runs/{id}` | Poll run status and per-trace results |
+| `POST /eval/runs/{id}/mark_baseline` | Mark a completed run as the baseline `/compare` measures against |
+| `GET /eval/runs/{id}/compare` | Diff a run's aggregate metrics against the baseline, with a `regressed: true/false` verdict |
 | `GET /health` | Liveness + DB connectivity check |
 | `GET /metrics` | Prometheus exposition (request rate/latency) |
 
@@ -82,6 +84,26 @@ python -m scripts.compute_detection_recall --api-url http://localhost:8000
 | 33.3% | 66.7% | 3.4% |
 
 `phi` is a small model running on CPU — it misses about two-thirds of the injected bad traces. This is the judge's real, measured detection rate on this benchmark, not a target or an estimate; a larger or hosted model would be expected to score higher, but that hasn't been measured here.
+
+## Baseline comparison, regression detection, and gating
+
+```bash
+# after a run finishes:
+curl -X POST localhost:8000/eval/runs/<run_id>/mark_baseline
+
+# after a later run finishes, compare it against whichever run is marked baseline:
+curl localhost:8000/eval/runs/<other_run_id>/compare
+```
+
+`/compare` returns per-metric deltas (`avg_correctness`, `avg_relevance`, `avg_groundedness`, `hallucination_rate`: baseline value, candidate value, absolute delta, relative delta) and a `regressed: true/false` verdict. The gate: correctness/groundedness dropping more than 5% relative to baseline, or hallucination rate rising more than 5 percentage points, count as a regression (relevance is reported but doesn't gate — reasoning in [docs/architecture.md](docs/architecture.md)).
+
+`scripts/check_regression.py` calls `/compare` for a given run and exits non-zero if `regressed: true` — something a CI step or deployment script can actually act on:
+
+```bash
+python -m scripts.check_regression --api-url http://localhost:8000 --run-id <uuid>
+```
+
+**Not wired into `.github/workflows/ci.yml`** — every call needs a real, completed eval run scored by a live judge, which a GitHub-hosted runner doesn't have (same reason the detection benchmark above isn't CI-gated). The gate itself is real and independently callable; see [docs/architecture.md](docs/architecture.md#baseline-comparison-regression-detection-and-the-gate) for the full design and a real run's `/compare` output.
 
 ## Monitoring (Prometheus + Grafana)
 
